@@ -21,6 +21,7 @@ else
 	echo "$0: File '${file}' has been created. ENDING THE SCRIPT."
 	exit 1
 fi
+sleep 2s
 
 ###Install Essential Packages###
 echo "Installing Zabbix repository.."
@@ -48,7 +49,7 @@ if [[ "$result" == 'ActiveState=active' ]]; then
 else
     echo "$service is not running" # Do something else here
 fi
-sleep 2s
+sleep 5s
 
 ###Editing Zabbix agent configuration file
 echo "Editing Zabbix agent config file.."
@@ -60,6 +61,7 @@ sleep 2s
 cat /etc/zabbix/zabbix_agentd.conf.bak | sed 's/ServerActive=127.0.0.1/ServerActive=10.10.0.190/g' > /etc/zabbix/zabbix_agentd.conf
 sleep 2s
 cat /etc/zabbix/zabbix_agentd.conf.bak | sed 's/Hostname=Zabbix server/Hostname=infra-zabbix.bestinet.my/g' > /etc/zabbix/zabbix_agentd.conf
+sleep 5s
 
 ###Starting Zabbix agent service###
 echo "Starting Zabbix agent service.."
