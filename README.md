@@ -1,6 +1,6 @@
 # Fresh-Zabbix_Agent-Install 
 
-Install agent script for Zabbix monitoring.
+Zabbix Agent install script for Zabbix monitoring.
 
 ## Warning
 
