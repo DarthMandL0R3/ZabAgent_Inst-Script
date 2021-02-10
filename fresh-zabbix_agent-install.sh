@@ -11,7 +11,7 @@ file="/root/.zabbix_agent-install"
 
 if [ ! -f "$file" ]
 then
-	echo "$0: File '${file}' has not been created. Proceeding with agent installation."
+	echo "$0: File '${file}' has not been created. PROCEEDING WITH INSTALLATION."
 else
 	echo "$0: File '${file}' has been created. ENDING THE SCRIPT."
 	exit 1
@@ -28,29 +28,51 @@ echo "Zabbix repository installed"
 ###Install Zabbix agent###
 echo "Install Zabbix agent.."
 echo "----------------------"
-yum install -y zabbix zabbix-agent
+yum install -y zabbix-agent
 sleep 5s
 echo "------------------"
 echo "Zabbix agent installed"
 
 ###Enabling Port 10050 in Firewall###
 echo "Enabling port 10050/tcp on firewall.."
-echo "-----------------------------------------"
-/usr/bin/firewall-cmd --permanent --add-port=10050/tcp
-/usr/bin/firewall-cmd --reload
-sleep 5s
+echo "-------------------------------------"
+sleep 2s
+service=firewalld
+result=`systemctl show --property=ActiveState $service`
+if [[ "$result" == 'ActiveState=active' ]]; then
+    echo "$service is running" # Do something here
+    firewall-cmd --permanent --add-port=10050/tcp
+    firewall-cmd --reload
+	firewall-cmd --list-all
+else
+    echo "$service is not running" # Do something else here
+fi
+sleep 2s
 echo "------------------"
 echo "Port 10050 enabled"
 
-###Edit ULimit###
-#echo "Starting Zabbix agent service.."
-#echo "----------------"
-#systemctl enable zabbix-agent
-#systemctl start zabbix-agent
-#systemctl status zabbix-agent
-#sleep 5s
-#echo "-------------"
-#echo "Zabbix agent have been started"
+###Editing Zabbix agent configuration file
+echo "Editing Zabbix agent config file.."
+echo "-------------------------------------"
+cp -p /etc/zabbix/zabbix_agentd.conf /etc/zabbix/zabbix_agentd.conf.bak
+sleep 2s
+cat /etc/zabbix/zabbix_agentd.conf.bak | sed 's/Server=127.0.0.1/Server=10.10.0.190/g' > /etc/zabbix/zabbix_agentd.conf
+sleep 2s
+cat /etc/zabbix/zabbix_agentd.conf.bak | sed 's/ServerActive=127.0.0.1/ServerActive=10.10.0.190/g' > /etc/zabbix/zabbix_agentd.conf
+sleep 2s
+cat /etc/zabbix/zabbix_agentd.conf.bak | sed 's/Hostname=Zabbix server/Hostname=infra-zabbix.bestinet.my/g' > /etc/zabbix/zabbix_agentd.conf
+echo "-----------------"
+echo "Editing completed"
+
+###Starting Zabbix agent service###
+echo "Starting Zabbix agent service.."
+echo "-------------------------------"
+systemctl enable zabbix-agent
+systemctl start zabbix-agent
+systemctl status zabbix-agent
+sleep 5s
+echo "------------------------------"
+echo "Zabbix agent have been started"
 
 echo "THIS SCRIPT ALREADY RUN BY $(whoami) at $(date)" > /root/.zabbix_agent-install
 sleep 5s
