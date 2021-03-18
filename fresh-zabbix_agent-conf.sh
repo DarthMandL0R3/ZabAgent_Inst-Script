@@ -11,7 +11,7 @@ FILE=/etc/zabbix/zabbix_agentd.conf
 NAME=`hostname -f`
 
 sed -i -r 's/127.0.0.1$/10.10.0.190/g;s/Hostname=Zabbix server/Hostname='"$NAME"'/g' $FILE
-sleep 2s
+sleep 3s
 
 echo "Done"
 
