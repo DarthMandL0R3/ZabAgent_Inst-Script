@@ -50,7 +50,7 @@ if [[ "$result" == 'ActiveState=active' ]]; then
     echo "$service is running" # Do something here
     firewall-cmd --permanent --add-port=10050/tcp
     firewall-cmd --reload
-	firewall-cmd --list-all
+    firewall-cmd --list-all
 else
     echo "$service is not running" # Do something else here
 fi
